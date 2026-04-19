@@ -93,6 +93,7 @@ const answers = reactive({})
 const multiAnswers = reactive({})
 const currentIndex = ref(0)
 const remainingTime = ref(0)
+const tabSwitchCount = ref(0)
 let timer = null
 let recordId = null
 
@@ -134,6 +135,18 @@ const saveAnswer = async (questionId) => {
     await examAPI.saveAnswer({ recordId, questionId, userAnswer })
   } catch (e) {
     console.error('保存答案失败', e)
+  }
+}
+
+const handleVisibilityChange = async () => {
+  if (document.hidden && recordId) {
+    tabSwitchCount.value++
+    ElMessage.warning(`检测到切屏，已记录（第 ${tabSwitchCount.value} 次）`)
+    try {
+      await examAPI.reportTabSwitch(recordId)
+    } catch (e) {
+      console.error('上报切屏失败', e)
+    }
   }
 }
 
@@ -192,10 +205,14 @@ const doSubmit = async () => {
   }
 }
 
-onMounted(loadExam)
+onMounted(() => {
+  loadExam()
+  document.addEventListener('visibilitychange', handleVisibilityChange)
+})
 
 onUnmounted(() => {
   if (timer) clearInterval(timer)
+  document.removeEventListener('visibilitychange', handleVisibilityChange)
 })
 </script>
 
