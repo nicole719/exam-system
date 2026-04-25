@@ -42,7 +42,8 @@ export const examAPI = {
   getProgress: (recordId) => request.get(`/exam/progress/${recordId}`),
   submit: (recordId) => request.post(`/exam/submit/${recordId}`),
   history: (params) => request.get('/exam/history', { params }),
-  detail: (recordId) => request.get(`/exam/detail/${recordId}`)
+  detail: (recordId) => request.get(`/exam/detail/${recordId}`),
+  reportTabSwitch: (data) => request.post('/exam/reportTabSwitch', data)
 }
 
 export const scoreAPI = {
