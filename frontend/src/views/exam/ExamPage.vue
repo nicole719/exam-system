@@ -143,7 +143,7 @@ const handleVisibilityChange = async () => {
     tabSwitchCount.value++
     ElMessage.warning(`检测到切屏，已记录（第 ${tabSwitchCount.value} 次）`)
     try {
-      await examAPI.reportTabSwitch({ recordId, tabSwitchCount: tabSwitchCount.value })
+      // await examAPI.reportTabSwitch({ recordId, tabSwitchCount: tabSwitchCount.value })
     } catch (e) {
       console.error('上报切屏失败', e)
     }
