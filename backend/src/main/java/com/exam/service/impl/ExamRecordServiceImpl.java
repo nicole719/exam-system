@@ -49,6 +49,9 @@ public class ExamRecordServiceImpl extends ServiceImpl<ExamRecordMapper, ExamRec
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
+    @Autowired
+    private SysUserMapper sysUserMapper;
+
     @Value("${exam.answer-cache-prefix}")
     private String cachePrefix;
 
@@ -244,6 +247,10 @@ public class ExamRecordServiceImpl extends ServiceImpl<ExamRecordMapper, ExamRec
             if (paper != null) {
                 vo.setPaperTitle(paper.getTitle());
             }
+            SysUser user = sysUserMapper.selectById(r.getUserId());
+            if (user != null) {
+                vo.setUserName(user.getRealName());
+            }
             return vo;
         }).collect(Collectors.toList());
 
@@ -263,6 +270,10 @@ public class ExamRecordServiceImpl extends ServiceImpl<ExamRecordMapper, ExamRec
             ExamPaper paper = examPaperService.getById(record.getPaperId());
             if (paper != null) {
                 vo.setPaperTitle(paper.getTitle());
+            }
+            SysUser user = sysUserMapper.selectById(record.getUserId());
+            if (user != null) {
+                vo.setUserName(user.getRealName());
             }
             List<ExamAnswer> answers = examAnswerMapper.selectList(
                 new LambdaQueryWrapper<ExamAnswer>().eq(ExamAnswer::getRecordId, recordId)
