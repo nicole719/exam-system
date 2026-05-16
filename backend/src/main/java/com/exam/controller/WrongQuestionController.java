@@ -6,6 +6,7 @@ import com.exam.service.WrongQuestionService;
 import com.exam.utils.UserDetailsImpl;
 import com.exam.vo.QuestionVO;
 import com.exam.vo.Result;
+import com.exam.vo.WrongQuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,7 +29,7 @@ public class WrongQuestionController {
      * 分页查询错题列表
      */
     @GetMapping("/list")
-    public Result<IPage<WrongQuestion>> list(
+    public Result<IPage<WrongQuestionVO>> list(
             @RequestParam(defaultValue = "1") Integer pageNum,
             @RequestParam(defaultValue = "10") Integer pageSize) {
         Long userId = getCurrentUserId();

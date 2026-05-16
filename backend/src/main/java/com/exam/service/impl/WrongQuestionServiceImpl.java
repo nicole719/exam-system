@@ -11,6 +11,7 @@ import com.exam.mapper.WrongQuestionMapper;
 import com.exam.service.WrongQuestionService;
 import com.exam.service.QuestionBankService;
 import com.exam.vo.QuestionVO;
+import com.exam.vo.WrongQuestionVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,15 +34,34 @@ public class WrongQuestionServiceImpl extends ServiceImpl<WrongQuestionMapper, W
     private QuestionBankMapper questionBankMapper;
 
     /**
-     * 分页查询错题列表
+     * 分页查询错题列表（含题目详情）
      */
     @Override
-    public IPage<WrongQuestion> pageList(Integer pageNum, Integer pageSize, Long userId) {
+    public IPage<WrongQuestionVO> pageList(Integer pageNum, Integer pageSize, Long userId) {
         Page<WrongQuestion> page = new Page<>(pageNum, pageSize);
         LambdaQueryWrapper<WrongQuestion> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(WrongQuestion::getUserId, userId);
         wrapper.orderByDesc(WrongQuestion::getCreateTime);
-        return page(page, wrapper);
+        IPage<WrongQuestion> recordPage = page(page, wrapper);
+
+        IPage<WrongQuestionVO> voPage = new Page<>(recordPage.getCurrent(), recordPage.getSize(), recordPage.getTotal());
+        List<WrongQuestionVO> voList = recordPage.getRecords().stream().map(w -> {
+            WrongQuestionVO vo = new WrongQuestionVO();
+            vo.setId(w.getId());
+            vo.setQuestionId(w.getQuestionId());
+            vo.setWrongCount(w.getWrongCount());
+            vo.setLastPracticeTime(w.getLastPracticeTime());
+            QuestionBank q = questionBankMapper.selectById(w.getQuestionId());
+            if (q != null) {
+                vo.setContent(q.getContent());
+                vo.setQuestionType(q.getQuestionType());
+                vo.setAnswer(q.getAnswer());
+            }
+            return vo;
+        }).collect(Collectors.toList());
+
+        voPage.setRecords(voList);
+        return voPage;
     }
 
     /**

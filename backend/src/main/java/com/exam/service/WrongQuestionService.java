@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.exam.entity.WrongQuestion;
 import com.exam.vo.QuestionVO;
+import com.exam.vo.WrongQuestionVO;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public interface WrongQuestionService extends IService<WrongQuestion> {
      * @param userId 用户ID
      * @return 错题分页结果
      */
-    IPage<WrongQuestion> pageList(Integer pageNum, Integer pageSize, Long userId);
+    IPage<WrongQuestionVO> pageList(Integer pageNum, Integer pageSize, Long userId);
 
     /**
      * 记录错题
